@@ -113,8 +113,9 @@ switch ($UserSource)
         Write-Host "User list set to read from CSV file" -BackgroundColor Black -ForegroundColor Green
         #
         # Extracting the CSV file path
-        $finalFilePath=$csvFileRawPath -Split "csv:"
-        write-host "CSV file to use: $finalFilePath" -BackgroundColor Black -ForegroundColor Yellow
+        $finalCSVFilePath=$csvFileRawPath -Split "csv:"
+        $csvFN = $finalCSVFilePath[1]
+        write-host "CSV file to use: $csvFN" -BackgroundColor Black -ForegroundColor Yellow
     }
     "EMAIL"{ #EMAIL file source
         Write-Host "User list set to read from a single email address" -BackgroundColor Black -ForegroundColor Green
@@ -136,7 +137,7 @@ switch ($InfoSource)
             "AD"{
                 #
                 # Read the CSV file and execute GAM with HTML signature code
-                # Reading the signature text file
+                # Reading the user info file
                 $userData = Import-Csv userInfo.csv
                 foreach ($Entry in $userData) {
                     $FullName = $Entry.DisplayName
@@ -157,21 +158,21 @@ switch ($InfoSource)
                     write-host "Working on $FullName" -BackgroundColor Yellow -ForegroundColor black
                     #
                     # Reading the content of the original signature file, and replacing variables in a run-time signature file
-                    (Get-Content signature.txt).Replace('$DisplayName',$FullName) | Set-Content signature-runtime.txt
-                    (Get-Content signature-runtime.txt).Replace('$Title',$TitleName) | Set-Content signature-runtime.txt
-                    (Get-Content signature-runtime.txt).Replace('$Company',$CompanyName) | Set-Content signature-runtime.txt
-                    (Get-Content signature-runtime.txt).Replace('$Department',$DepartmentName) | Set-Content signature-runtime.txt
-                    (Get-Content signature-runtime.txt).Replace('$HomePhone',$HomePhoneNo) | Set-Content signature-runtime.txt
-                    (Get-Content signature-runtime.txt).Replace('$mail',$EmailAddr) | Set-Content signature-runtime.txt
-                    (Get-Content signature-runtime.txt).Replace('$POBox',$PoBoxNo) | Set-Content signature-runtime.txt
-                    (Get-Content signature-runtime.txt).Replace('$City',$CityName) | Set-Content signature-runtime.txt
-                    (Get-Content signature-runtime.txt).Replace('$PostalCode',$PostalCodeNo) | Set-Content signature-runtime.txt
-                    (Get-Content signature-runtime.txt).Replace('$State',$StateName) | Set-Content signature-runtime.txt
-                    (Get-Content signature-runtime.txt).Replace('$Country',$CountryName) | Set-Content signature-runtime.txt
-                    (Get-Content signature-runtime.txt).Replace('$Fax',$FaxNo) | Set-Content signature-runtime.txt
-                    (Get-Content signature-runtime.txt).Replace('$MobilePhone',$MobilePhoneNo) | Set-Content signature-runtime.txt
-                    (Get-Content signature-runtime.txt).Replace('$OfficePhone',$OfficePhoneNo) | Set-Content signature-runtime.txt
-                    (Get-Content signature-runtime.txt).Replace('$StreetAddress',$StreetAddrDesc) | Set-Content signature-runtime.txt
+                    (Get-Content signature.txt) -Replace "_DisplayName",$FullName | Out-File signature-runtime.txt -Encoding utf8
+                    (Get-Content signature-runtime.txt) -Replace "_Title",$TitleName | Out-File signature-runtime.txt -Encoding utf8
+                    (Get-Content signature-runtime.txt) -Replace "_Company",$CompanyName | Out-File signature-runtime.txt -Encoding utf8
+                    (Get-Content signature-runtime.txt) -Replace "_Department",$DepartmentName | Out-File signature-runtime.txt -Encoding utf8
+                    (Get-Content signature-runtime.txt) -Replace "_HomePhone",$HomePhoneNo | Out-File signature-runtime.txt -Encoding utf8
+                    (Get-Content signature-runtime.txt) -Replace "_mail",$EmailAddr | Out-File signature-runtime.txt -Encoding utf8
+                    (Get-Content signature-runtime.txt) -Replace "_POBox",$PoBoxNo | Out-File signature-runtime.txt -Encoding utf8
+                    (Get-Content signature-runtime.txt) -Replace "_City",$CityName | Out-File signature-runtime.txt -Encoding utf8
+                    (Get-Content signature-runtime.txt) -Replace "_PostalCode",$PostalCodeNo | Out-File signature-runtime.txt -Encoding utf8
+                    (Get-Content signature-runtime.txt) -Replace "_State",$StateName | Out-File signature-runtime.txt -Encoding utf8
+                    (Get-Content signature-runtime.txt) -Replace "_Country",$CountryName | Out-File signature-runtime.txt -Encoding utf8
+                    (Get-Content signature-runtime.txt) -Replace "_Fax",$FaxNo | Out-File signature-runtime.txt -Encoding utf8
+                    (Get-Content signature-runtime.txt) -Replace "_MobilePhone",$MobilePhoneNo | Out-File signature-runtime.txt -Encoding utf8
+                    (Get-Content signature-runtime.txt) -Replace "_OfficePhone",$OfficePhoneNo | Out-File signature-runtime.txt -Encoding utf8
+                    (Get-Content signature-runtime.txt) -Replace "_StreetAddress",$StreetAddrDesc | Out-File signature-runtime.txt -Encoding utf8
                     #
                     # Assigning the signature text to the variable
                     $signatureTxt = Get-Content signature-runtime.txt
@@ -189,6 +190,62 @@ switch ($InfoSource)
                 #
                 # User source was set to CSV
                 # We need to read the CSV file, inquiry AD for required info, and invoke GAM for each user
+                $userCSVSource = Import-Csv $finalCSVFilePath[1]
+                foreach ($Entry in $userCSVSource) {
+                    #
+                    # Getting the user information from active directory, and storing them into a text file
+                    $userID=$Entry.EmailAddress
+                    Get-ADUser -Filter {mail -eq $userID} -Properties * | Select-Object mail, DisplayName, City, Company, Department, Fax, HomePhone, MobilePhone, OfficePhone, POBox, PostalCode, State, Country, StreetAddress, Title | Export-Csv userInfo.csv -notype
+                    #
+                    # Invoking GAM with the user information and signature file
+                    $userData = Import-Csv userInfo.csv
+                    foreach ($Entry in $userData) {
+                        $FullName = $Entry.DisplayName
+                        $EmailAddr = $Entry.mail
+                        $CityName = $Entry.City
+                        $CompanyName = $Entry.Company
+                        $DepartmentName = $Entry.Department
+                        $FaxNo = $Entry.Fax
+                        $HomePhoneNo = $Entry.HomePhone
+                        $MobilePhoneNo = $Entry.MobilePhone
+                        $OfficePhoneNo = $Entry.OfficePhone
+                        $PoBoxNo = $Entry.POBox
+                        $PostalCodeNo = $Entry.PostalCode
+                        $StateName = $Entry.State
+                        $CountryName = $Entry.Country
+                        $StreetAddrDesc = $Entry.StreetAddress
+                        $TitleName = $Entry.Title
+                        write-host "Working on $FullName" -BackgroundColor Yellow -ForegroundColor black
+                        #
+                        # Reading the content of the original signature file, and replacing variables in a run-time signature file
+                        (Get-Content signature.txt) -Replace "_DisplayName",$FullName | Out-File signature-runtime.txt -Encoding utf8
+                        (Get-Content signature-runtime.txt) -Replace "_Title",$TitleName | Out-File signature-runtime.txt -Encoding utf8
+                        (Get-Content signature-runtime.txt) -Replace "_Company",$CompanyName | Out-File signature-runtime.txt -Encoding utf8
+                        (Get-Content signature-runtime.txt) -Replace "_Department",$DepartmentName | Out-File signature-runtime.txt -Encoding utf8
+                        (Get-Content signature-runtime.txt) -Replace "_HomePhone",$HomePhoneNo | Out-File signature-runtime.txt -Encoding utf8
+                        (Get-Content signature-runtime.txt) -Replace "_mail",$EmailAddr | Out-File signature-runtime.txt -Encoding utf8
+                        (Get-Content signature-runtime.txt) -Replace "_POBox",$PoBoxNo | Out-File signature-runtime.txt -Encoding utf8
+                        (Get-Content signature-runtime.txt) -Replace "_City",$CityName | Out-File signature-runtime.txt -Encoding utf8
+                        (Get-Content signature-runtime.txt) -Replace "_PostalCode",$PostalCodeNo | Out-File signature-runtime.txt -Encoding utf8
+                        (Get-Content signature-runtime.txt) -Replace "_State",$StateName | Out-File signature-runtime.txt -Encoding utf8
+                        (Get-Content signature-runtime.txt) -Replace "_Country",$CountryName | Out-File signature-runtime.txt -Encoding utf8
+                        (Get-Content signature-runtime.txt) -Replace "_Fax",$FaxNo | Out-File signature-runtime.txt -Encoding utf8
+                        (Get-Content signature-runtime.txt) -Replace "_MobilePhone",$MobilePhoneNo | Out-File signature-runtime.txt -Encoding utf8
+                        (Get-Content signature-runtime.txt) -Replace "_OfficePhone",$OfficePhoneNo | Out-File signature-runtime.txt -Encoding utf8
+                        (Get-Content signature-runtime.txt) -Replace "_StreetAddress",$StreetAddrDesc | Out-File signature-runtime.txt -Encoding utf8
+                        #
+                        # Assigning the signature text to the variable
+                        $signatureTxt = Get-Content signature-runtime.txt
+                        Write-Host "Signature text we will apply is:" -BackgroundColor Black -ForegroundColor Green
+                        Write-Host $signatureTxt
+                        #
+                        # Invoking GAM tool to read the signature text
+                        Write-Host "Invoking GAM for user $EmailAddr" -BackgroundColor Yellow -ForegroundColor Black
+                        $currentWD=Convert-Path .
+                        $sigFilePath = "$currentWD\signature-runtime.txt"
+                        .\gam\gam.exe user $EmailAddr signature file $sigFilePath
+                    }
+                }
             }
             "EMAIL"{
                 #
