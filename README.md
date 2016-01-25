@@ -13,14 +13,21 @@ Prerequisites
 Usage Instructions
 ------------------
 
-.\Add-GAppsUserSignature.ps1 -UserSource [AD,CSV:<CSVFilePath>,EMAIL:<EmailAddress>]
+    .\Add-GAppsUserSignature.ps1 -UserSource [AD,CSV:<CSVFilePath>,EMAIL:<EmailAddress>] -InfoSource [AD,CSV]
 
 The script requires two parameters to be passed when starting the script, in addition to two more while executing the script.
 
 The first 2 are:
 
  - **-UserSource**: this parameter sets the source from where the script will read the list of users to apply the signature on them.
+	 - It can accept 3 arguments:
+		 - *AD*, sets the source of information to be pulled from Active-Directory, this will require supplying the local domain name and the baseDN where we want to perform the search.
+		 - *CSV*, example: CSV:c:\users\user1\documents\userlist.csv (File format instructions can be found here), this can be used for having a list of specific users we want to edit their signature without using AD.
+		 - *Email*, example: EMAIL:someone@domain.com, this is going to perform the signature edit for this specific user only.
  - **-InfoSource**: this parameter sets the source from where the script will read the signature information to apply it on users we have acquired in the previous parameter.
+	 - It can accept 2 arguments:
+		 - *AD*, sets the information source to be pulled from Active-Directory. We don't need to have a domain name or a baseDN here, as the user list should be already prepared using the first parameter.
+		 - *CSV*, allows us to read the signature information from a pre-filled CSV file. This can be useful as there is no need to specify a CSV file name, as the file name is hardcoded with userInfo.csv, and the file will be sitting in the same script directory. This file is also auto-generated when using the AD as user source. (information about the file format and required columns can be found here).
 
 When using AD as user source, the following two parameters will be required to supply to the script in order to be able to search in AD:
 
