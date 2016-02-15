@@ -6,7 +6,7 @@ GAM-Bulk-Signature-Creator-PS is a small powershell script that work with GAM to
 Prerequisites
 -------------
 
- - Windows Server 2008 R2/2012 minumum
+ - Windows Server 2008 R2/2012 minimum
  - GAM must be fully configured and already working (please check GAM's documentation to get it working).
  - AD structure to be existent and working in case of using AD as a source for user or information.
  - Admin access to your Google Apps for Work/Education console.
