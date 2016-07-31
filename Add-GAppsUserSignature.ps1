@@ -158,6 +158,7 @@ switch ($InfoSource)
                     $CountryName = $Entry.Country
                     $StreetAddrDesc = $Entry.StreetAddress
                     $TitleName = $Entry.Title
+                    $IPPhone = $Entry.IPPhone
                     # End of variables section
                     write-host "Working on $FullName" -BackgroundColor Yellow -ForegroundColor Red
                     #
@@ -178,6 +179,7 @@ switch ($InfoSource)
                     (Get-Content signature-runtime.txt) -Replace "_MobilePhone",$MobilePhoneNo | Out-File signature-runtime.txt -Encoding utf8
                     (Get-Content signature-runtime.txt) -Replace "_OfficePhone",$OfficePhoneNo | Out-File signature-runtime.txt -Encoding utf8
                     (Get-Content signature-runtime.txt) -Replace "_StreetAddress",$StreetAddrDesc | Out-File signature-runtime.txt -Encoding utf8
+                    (Get-Content signature-runtime.txt) -Replace "_IPPhone",$IPPhone | Out-File signature-runtime.txt -Encoding utf8
                     # End of replacing variables section
                     #
                     # Assigning the signature text to the variable
@@ -224,6 +226,7 @@ switch ($InfoSource)
                         $CountryName = $Entry.Country
                         $StreetAddrDesc = $Entry.StreetAddress
                         $TitleName = $Entry.Title
+                        $IPPhone = $Entry.IPPhone
                         # End of variables section
                         write-host "Working on $FullName" -BackgroundColor Yellow -ForegroundColor Red
                         #
@@ -244,6 +247,7 @@ switch ($InfoSource)
                         (Get-Content signature-runtime.txt) -Replace "_MobilePhone",$MobilePhoneNo | Out-File signature-runtime.txt -Encoding utf8
                         (Get-Content signature-runtime.txt) -Replace "_OfficePhone",$OfficePhoneNo | Out-File signature-runtime.txt -Encoding utf8
                         (Get-Content signature-runtime.txt) -Replace "_StreetAddress",$StreetAddrDesc | Out-File signature-runtime.txt -Encoding utf8
+                        (Get-Content signature-runtime.txt) -Replace "_IPPhone",$IPPhone | Out-File signature-runtime.txt -Encoding utf8
                         # End of replacing variables section
                         #
                         # Assigning the signature text to the variable
@@ -286,6 +290,7 @@ switch ($InfoSource)
                     $CountryName = $Entry.Country
                     $StreetAddrDesc = $Entry.StreetAddress
                     $TitleName = $Entry.Title
+                    $IPPhone = $Entry.IPPhone
                     # End of variables section
                     write-host "Working on $FullName" -BackgroundColor Yellow -ForegroundColor Red
                     #
@@ -306,6 +311,7 @@ switch ($InfoSource)
                     (Get-Content signature-runtime.txt) -Replace "_MobilePhone",$MobilePhoneNo | Out-File signature-runtime.txt -Encoding utf8
                     (Get-Content signature-runtime.txt) -Replace "_OfficePhone",$OfficePhoneNo | Out-File signature-runtime.txt -Encoding utf8
                     (Get-Content signature-runtime.txt) -Replace "_StreetAddress",$StreetAddrDesc | Out-File signature-runtime.txt -Encoding utf8
+                    (Get-Content signature-runtime.txt) -Replace "_IPPhone",$IPPhone | Out-File signature-runtime.txt -Encoding utf8
                     # End of replacing variables section
                     #
                     # Assigning the signature text to the variable
@@ -347,6 +353,7 @@ switch ($InfoSource)
             $CountryName = $Entry.Country
             $StreetAddrDesc = $Entry.StreetAddress
             $TitleName = $Entry.Title
+            $IPPhone = $Entry.IPPhone
             # End of variables section
             write-host "Working on $FullName" -BackgroundColor Yellow -ForegroundColor Red
             #
@@ -367,6 +374,7 @@ switch ($InfoSource)
             (Get-Content signature-runtime.txt) -Replace "_MobilePhone",$MobilePhoneNo | Out-File signature-runtime.txt -Encoding utf8
             (Get-Content signature-runtime.txt) -Replace "_OfficePhone",$OfficePhoneNo | Out-File signature-runtime.txt -Encoding utf8
             (Get-Content signature-runtime.txt) -Replace "_StreetAddress",$StreetAddrDesc | Out-File signature-runtime.txt -Encoding utf8
+            (Get-Content signature-runtime.txt) -Replace "_IPPhone",$IPPhone | Out-File signature-runtime.txt -Encoding utf8
             # End of replacing variable section
             #
             # Assigning the signature text to the variable
